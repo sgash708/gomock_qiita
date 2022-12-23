@@ -13,7 +13,6 @@ services:
     restart: always
     tty: true
     environment:
-      ENV: "development"
       PORT: "1234"
       DRIVER: "mysql"
       DATASOURCE: "mock-user:password@tcp(mysql)/mock-db?charset=utf8mb4&parseTime=true"
