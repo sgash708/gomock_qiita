@@ -3,7 +3,7 @@
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-		<title>Go Coverage Report</title>
+		<title>config: Go Coverage Report</title>
 		<style>
 			body {
 				background: black;
@@ -55,26 +55,38 @@
 			<div id="nav">
 				<select id="files">
 				
+				<option value="file0">server/config/config.go (75.0%)</option>
+				
 				</select>
 			</div>
 			<div id="legend">
 				<span>not tracked</span>
 			
-				<span class="cov0">no coverage</span>
-				<span class="cov1">low coverage</span>
-				<span class="cov2">*</span>
-				<span class="cov3">*</span>
-				<span class="cov4">*</span>
-				<span class="cov5">*</span>
-				<span class="cov6">*</span>
-				<span class="cov7">*</span>
-				<span class="cov8">*</span>
-				<span class="cov9">*</span>
-				<span class="cov10">high coverage</span>
+				<span class="cov0">not covered</span>
+				<span class="cov8">covered</span>
 			
 			</div>
 		</div>
 		<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">package config
+
+import "github.com/caarlos0/env"
+
+type ServerConfig struct {
+        Port       string `json:"PORT,omitempty" env:"PORT,required"`
+        DriverName string `json:"DRIVER,omitempty" env:"DRIVER,required"`
+        DataSource string `json:"DATASOURCE,omitempty" env:"DATASOURCE,required"`
+}
+
+func LoadEnvConfig() (*ServerConfig, error) <span class="cov8" title="1">{
+        var cfg ServerConfig
+        if err := env.Parse(&amp;cfg); err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov8" title="1">return &amp;cfg, nil</span>
+}
+</pre>
 		
 		</div>
 	</body>
