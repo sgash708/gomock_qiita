@@ -1,6 +1,6 @@
 mode: set
-server/api/application/application.go:23.66,25.2 1 1
 server/api/application/book.go:8.85,11.2 1 0
+server/api/application/application.go:23.66,25.2 1 1
 server/api/handler/book.go:10.50,12.38 2 1
 server/api/handler/book.go:16.2,18.16 3 1
 server/api/handler/book.go:22.2,22.36 1 1
@@ -20,9 +20,6 @@ server/api/handler/handler.go:26.46,28.2 2 0
 server/api/handler/handler.go:28.2,30.3 2 0
 server/api/handler/handler.go:30.3,36.4 5 0
 server/api/handler/handler.go:40.59,42.2 1 1
-server/config/config.go:11.45,13.40 2 1
-server/config/config.go:16.2,16.18 1 1
-server/config/config.go:13.40,15.3 1 0
 server/api/infrastracture/persistence/book.go:21.50,23.2 1 1
 server/api/infrastracture/persistence/book.go:25.103,27.16 2 1
 server/api/infrastracture/persistence/book.go:31.2,32.45 2 1
@@ -38,18 +35,18 @@ server/api/infrastracture/persistence/book.go:44.16,46.3 1 0
 server/api/infrastracture/persistence/book.go:49.63,50.45 1 1
 server/api/infrastracture/persistence/book.go:53.3,53.18 1 0
 server/api/infrastracture/persistence/book.go:50.45,52.4 1 1
-server/api/infrastracture/persistence/book.go:59.118,61.16 2 0
-server/api/infrastracture/persistence/book.go:65.2,65.46 1 0
-server/api/infrastracture/persistence/book.go:69.2,69.18 1 0
+server/api/infrastracture/persistence/book.go:59.118,61.16 2 1
+server/api/infrastracture/persistence/book.go:65.2,65.46 1 1
+server/api/infrastracture/persistence/book.go:69.2,69.18 1 1
 server/api/infrastracture/persistence/book.go:61.16,63.3 1 0
-server/api/infrastracture/persistence/book.go:65.46,67.3 1 0
-server/api/infrastracture/persistence/book.go:72.118,74.16 2 0
-server/api/infrastracture/persistence/book.go:78.2,78.62 1 0
-server/api/infrastracture/persistence/book.go:82.2,82.18 1 0
+server/api/infrastracture/persistence/book.go:65.46,67.3 1 1
+server/api/infrastracture/persistence/book.go:72.118,74.16 2 1
+server/api/infrastracture/persistence/book.go:78.2,78.62 1 1
+server/api/infrastracture/persistence/book.go:82.2,82.18 1 1
 server/api/infrastracture/persistence/book.go:74.16,76.3 1 0
 server/api/infrastracture/persistence/book.go:78.62,80.3 1 0
-server/api/infrastracture/persistence/book.go:85.103,87.16 2 0
-server/api/infrastracture/persistence/book.go:91.2,91.30 1 0
+server/api/infrastracture/persistence/book.go:85.103,87.16 2 1
+server/api/infrastracture/persistence/book.go:91.2,91.30 1 1
 server/api/infrastracture/persistence/book.go:87.16,89.3 1 0
 server/api/infrastracture/persistence/repository.go:18.69,20.16 2 1
 server/api/infrastracture/persistence/repository.go:24.2,24.33 1 1
@@ -57,3 +54,6 @@ server/api/infrastracture/persistence/repository.go:20.16,22.3 1 0
 server/api/infrastracture/persistence/repository.go:27.53,29.2 1 1
 server/api/infrastracture/persistence/repository.go:31.45,33.2 1 1
 server/api/infrastracture/persistence/repository.go:35.64,37.2 1 1
+server/config/config.go:11.45,13.40 2 1
+server/config/config.go:16.2,16.18 1 1
+server/config/config.go:13.40,15.3 1 0

@@ -65,7 +65,7 @@
 				
 				<option value="file4">server/api/handler/handler.go (18.2%)</option>
 				
-				<option value="file5">server/api/infrastracture/persistence/book.go (37.1%)</option>
+				<option value="file5">server/api/infrastracture/persistence/book.go (71.4%)</option>
 				
 				<option value="file6">server/api/infrastracture/persistence/repository.go (85.7%)</option>
 				
@@ -295,39 +295,39 @@ func (br *bookRepository) FindByUUID(ctx context.Context, ri RepositoryInterface
         <span class="cov8" title="1">return &amp;book, nil</span>
 }
 
-func (br *bookRepository) Create(ctx context.Context, ri RepositoryInterface, book *model.Book) (*model.Book, error) <span class="cov0" title="0">{
+func (br *bookRepository) Create(ctx context.Context, ri RepositoryInterface, book *model.Book) (*model.Book, error) <span class="cov8" title="1">{
         db, err := getDBConnection(ri)
         if err != nil </span><span class="cov0" title="0">{
                 return nil, err
         }</span>
 
-        <span class="cov0" title="0">if err := db.Create(book).Error; err != nil </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">if err := db.Create(book).Error; err != nil </span><span class="cov8" title="1">{
                 return nil, err
         }</span>
 
-        <span class="cov0" title="0">return book, nil</span>
+        <span class="cov8" title="1">return book, nil</span>
 }
 
-func (br *bookRepository) Update(ctx context.Context, ri RepositoryInterface, book *model.Book) (*model.Book, error) <span class="cov0" title="0">{
+func (br *bookRepository) Update(ctx context.Context, ri RepositoryInterface, book *model.Book) (*model.Book, error) <span class="cov8" title="1">{
         db, err := getDBConnection(ri)
         if err != nil </span><span class="cov0" title="0">{
                 return nil, err
         }</span>
 
-        <span class="cov0" title="0">if err := db.Where(book.ID).Updates(book).Error; err != nil </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">if err := db.Where(book.ID).Updates(book).Error; err != nil </span><span class="cov0" title="0">{
                 return nil, err
         }</span>
 
-        <span class="cov0" title="0">return book, nil</span>
+        <span class="cov8" title="1">return book, nil</span>
 }
 
-func (br *bookRepository) Delete(ctx context.Context, ri RepositoryInterface, book *model.Book) error <span class="cov0" title="0">{
+func (br *bookRepository) Delete(ctx context.Context, ri RepositoryInterface, book *model.Book) error <span class="cov8" title="1">{
         db, err := getDBConnection(ri)
         if err != nil </span><span class="cov0" title="0">{
                 return err
         }</span>
 
-        <span class="cov0" title="0">return db.Delete(book).Error</span>
+        <span class="cov8" title="1">return db.Delete(book).Error</span>
 }
 </pre>
 		
