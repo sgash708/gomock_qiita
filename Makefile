@@ -31,25 +31,17 @@ build:
 build-up:
 	docker-compose up -d --remove-orphans
 
-.PHONY: test
-test:
-	docker-compose exec -T gomock_backend sh ./scripts/go_test.sh
-
 .PHONY: test-local
 test-local:
 	docker-compose exec gomock_backend go test -v server/...
 
-.PHONY: migrate-up
-migrate-up:
-	docker-compose exec -T gomock_backend sh ./scripts/migrate-up.sh
-
-.PHONY: migrate-down
-migrate-down:
-	docker-compose exec -T gomock_backend sh ./scripts/migrate-down.sh
-
 .PHONY: mockgen
 mockgen:
-	docker-compose exec gomock_backend mockgen -source=api/$(Path)/$(FileName) -destination=./mock/$(Path)/mock_$(FileName)
+	docker-compose exec gomock_backend go generate server/...
+
+.PHONY: migrate
+migrate:
+	docker-compose exec -T gomock_backend sh ./scripts/dev/migrate.sh
 
 .PHONY: create-mig-local
 create-mig-local:

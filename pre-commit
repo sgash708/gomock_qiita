@@ -6,4 +6,6 @@ cd server
 
 echo Running static check for golang
 staticcheck ./...
+
+echo Format source code
 go fmt ./...

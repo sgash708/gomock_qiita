@@ -13,10 +13,9 @@ services:
     restart: always
     tty: true
     environment:
-      ENV: "development"
       PORT: "1234"
       DRIVER: "mysql"
-      DATASOURCE: "mock-user:password@tcp(mysql)/pipchat-db?charset=utf8mb4&parseTime=true"
+      DATASOURCE: "mock-user:password@tcp(mock-mysql)/mock-db?charset=utf8mb4&parseTime=true"
       TZ: 'Asia/Tokyo'
     command: sh ./scripts/api.sh
     depends_on:

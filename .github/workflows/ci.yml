@@ -22,6 +22,7 @@ jobs:
 
       - name: Test with docker
         run: |
+          docker-compose exec -T gomock_backend go test ./...
           docker-compose exec -T gomock_backend sh ./scripts/go_test.sh
 
       - name: Show Test Coverage Results
