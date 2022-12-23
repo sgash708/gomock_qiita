@@ -3,6 +3,9 @@ package main
 import (
 	"fmt"
 	"log"
+	"server/api/application"
+	"server/api/client/i18n"
+	"server/api/handler"
 	"server/config"
 
 	"github.com/labstack/echo/v4"
@@ -18,7 +21,7 @@ func main() {
 	if cfg, err = config.LoadEnvConfig(); err != nil {
 		panic(err)
 	}
-	log.Println("STARTING MY NICE SERVER...")
+	log.Println("...STARTING MY NICE SERVER...")
 
 	e := echo.New()
 	e.Use(middleware.Logger())
@@ -37,11 +40,24 @@ func main() {
 func assignRoutes(e *echo.Echo, cfg *config.ServerConfig) error {
 	/* DI */
 
+	// Client
+	i18nClient, err := i18n.NewI18nClient()
+	if err != nil {
+		return err
+	}
+
 	// Repository
 
 	// Application
+	app := application.NewApplication(
+		&application.ApplicationBundle{
+			ServerConfig: cfg,
+		},
+	)
 
 	// Handler
+	h := handler.NewHandler(app, i18nClient)
+	h.AssignRoutes(e)
 
 	return nil
 }

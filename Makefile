@@ -37,7 +37,7 @@ test-local:
 
 .PHONY: mockgen
 mockgen:
-	docker-compose exec gomock_backend mockgen -source=api/$(Path)/$(FileName) -destination=./mock/$(Path)/mock_$(FileName)
+	docker-compose exec gomock_backend go generate server/...
 
 .PHONY: migrate
 migrate:
