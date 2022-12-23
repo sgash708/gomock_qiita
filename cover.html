@@ -57,9 +57,9 @@
 				
 				<option value="file0">server/api/application/application.go (100.0%)</option>
 				
-				<option value="file1">server/api/application/book.go (0.0%)</option>
+				<option value="file1">server/api/application/book.go (100.0%)</option>
 				
-				<option value="file2">server/api/handler/book.go (58.3%)</option>
+				<option value="file2">server/api/handler/book.go (75.0%)</option>
 				
 				<option value="file3">server/api/handler/error.go (57.1%)</option>
 				
@@ -88,6 +88,7 @@
 import (
         "context"
         "server/api/domain/model"
+        "server/api/infrastracture/persistence"
         "server/config"
 )
 
@@ -96,13 +97,15 @@ type application struct {
 }
 
 type ApplicationBundle struct {
-        ServerConfig *config.ServerConfig
-        // Repository persistence.RepositoryInterface
+        ServerConfig   *config.ServerConfig
+        Repository     persistence.RepositoryInterface
+        BookRepository persistence.BookRepositoryInterface
 }
 
 type ApplicationInterface interface {
         // Book
         GetBook(ctx context.Context, uid string) (*model.Book, error)
+        GetBooks(ctx context.Context) ([]*model.Book, error)
 }
 
 func NewApplication(bdl *ApplicationBundle) ApplicationInterface <span class="cov8" title="1">{
@@ -117,9 +120,12 @@ import (
         "server/api/domain/model"
 )
 
-func (a *application) GetBook(ctx context.Context, uid string) (*model.Book, error) <span class="cov0" title="0">{
-        // repo
-        return nil, nil
+func (a *application) GetBook(ctx context.Context, uid string) (*model.Book, error) <span class="cov8" title="1">{
+        return a.BookRepository.FindByUUID(ctx, a.Repository, uid)
+}</span>
+
+func (a *application) GetBooks(ctx context.Context) ([]*model.Book, error) <span class="cov8" title="1">{
+        return a.BookRepository.FindAll(ctx, a.Repository)
 }</span>
 </pre>
 		
@@ -147,9 +153,15 @@ func (h *Handler) GetBook(ec echo.Context) error <span class="cov8" title="1">{
         <span class="cov8" title="1">return ec.JSON(http.StatusOK, res)</span>
 }
 
-func (h *Handler) GetBooks(ec echo.Context) error <span class="cov0" title="0">{
-        return nil
-}</span>
+func (h *Handler) GetBooks(ec echo.Context) error <span class="cov8" title="1">{
+        ctx := h.GetCtx(ec)
+        res, err := h.Application.GetBooks(ctx)
+        if err != nil </span><span class="cov8" title="1">{
+                return h.NewErrorResponse(ec, err)
+        }</span>
+
+        <span class="cov8" title="1">return ec.JSON(http.StatusOK, res)</span>
+}
 
 func (h *Handler) CreateBook(ec echo.Context) error <span class="cov0" title="0">{
         return nil

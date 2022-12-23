@@ -1,9 +1,8 @@
 ?   	server	[no test files]
-ok  	server/api/application	0.007s	coverage: 50.0% of statements
+ok  	server/api/application	0.007s	coverage: 100.0% of statements
 ?   	server/api/client/i18n	[no test files]
 ?   	server/api/domain/model	[no test files]
-ok  	server/api/handler	0.018s	coverage: 43.3% of statements
+ok  	server/api/handler	0.012s	coverage: 52.9% of statements
 ?   	server/api/handler/request	[no test files]
-ok  	server/api/infrastracture/persistence	0.038s	coverage: 73.8% of statements
-?   	server/api/mock/client/i18n	[no test files]
+ok  	server/api/infrastracture/persistence	0.029s	coverage: 73.8% of statements
 ok  	server/config	0.002s	coverage: 75.0% of statements

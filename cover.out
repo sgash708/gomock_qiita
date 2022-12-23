@@ -1,15 +1,18 @@
 mode: set
-server/api/application/book.go:8.85,11.2 1 0
-server/api/application/application.go:23.66,25.2 1 1
+server/api/application/application.go:26.66,28.2 1 1
+server/api/application/book.go:8.85,10.2 1 1
+server/api/application/book.go:12.76,14.2 1 1
 server/api/handler/book.go:10.50,12.38 2 1
 server/api/handler/book.go:16.2,18.16 3 1
 server/api/handler/book.go:22.2,22.36 1 1
 server/api/handler/book.go:12.38,14.3 1 0
 server/api/handler/book.go:18.16,20.3 1 1
-server/api/handler/book.go:25.51,27.2 1 0
-server/api/handler/book.go:29.53,31.2 1 0
-server/api/handler/book.go:33.53,35.2 1 0
-server/api/handler/book.go:37.53,39.2 1 0
+server/api/handler/book.go:25.51,28.16 3 1
+server/api/handler/book.go:32.2,32.36 1 1
+server/api/handler/book.go:28.16,30.3 1 1
+server/api/handler/book.go:35.53,37.2 1 0
+server/api/handler/book.go:39.53,41.2 1 0
+server/api/handler/book.go:43.53,45.2 1 0
 server/api/handler/error.go:14.70,16.27 2 1
 server/api/handler/error.go:26.2,26.47 1 1
 server/api/handler/error.go:17.34,19.28 2 0
@@ -20,6 +23,9 @@ server/api/handler/handler.go:26.46,28.2 2 0
 server/api/handler/handler.go:28.2,30.3 2 0
 server/api/handler/handler.go:30.3,36.4 5 0
 server/api/handler/handler.go:40.59,42.2 1 1
+server/config/config.go:11.45,13.40 2 1
+server/config/config.go:16.2,16.18 1 1
+server/config/config.go:13.40,15.3 1 0
 server/api/infrastracture/persistence/book.go:21.50,23.2 1 1
 server/api/infrastracture/persistence/book.go:25.103,27.16 2 1
 server/api/infrastracture/persistence/book.go:31.2,32.45 2 1
@@ -54,6 +60,3 @@ server/api/infrastracture/persistence/repository.go:20.16,22.3 1 0
 server/api/infrastracture/persistence/repository.go:27.53,29.2 1 1
 server/api/infrastracture/persistence/repository.go:31.45,33.2 1 1
 server/api/infrastracture/persistence/repository.go:35.64,37.2 1 1
-server/config/config.go:11.45,13.40 2 1
-server/config/config.go:16.2,16.18 1 1
-server/config/config.go:13.40,15.3 1 0
