@@ -6,6 +6,7 @@ import (
 	"server/api/application"
 	"server/api/client/i18n"
 	"server/api/handler"
+	"server/api/infrastracture/persistence"
 	"server/config"
 
 	"github.com/labstack/echo/v4"
@@ -38,8 +39,6 @@ func main() {
 }
 
 func assignRoutes(e *echo.Echo, cfg *config.ServerConfig) error {
-	/* DI */
-
 	// Client
 	i18nClient, err := i18n.NewI18nClient()
 	if err != nil {
@@ -47,11 +46,17 @@ func assignRoutes(e *echo.Echo, cfg *config.ServerConfig) error {
 	}
 
 	// Repository
+	ri, err := persistence.Connect(cfg)
+	if err != nil {
+		return err
+	}
 
 	// Application
 	app := application.NewApplication(
 		&application.ApplicationBundle{
-			ServerConfig: cfg,
+			ServerConfig:   cfg,
+			Repository:     ri,
+			BookRepository: persistence.NewBookRepository(),
 		},
 	)
 

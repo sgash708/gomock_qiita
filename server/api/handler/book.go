@@ -23,7 +23,13 @@ func (h *Handler) GetBook(ec echo.Context) error {
 }
 
 func (h *Handler) GetBooks(ec echo.Context) error {
-	return nil
+	ctx := h.GetCtx(ec)
+	res, err := h.Application.GetBooks(ctx)
+	if err != nil {
+		return h.NewErrorResponse(ec, err)
+	}
+
+	return ec.JSON(http.StatusOK, res)
 }
 
 func (h *Handler) CreateBook(ec echo.Context) error {

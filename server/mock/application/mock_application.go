@@ -49,3 +49,18 @@ func (mr *MockApplicationInterfaceMockRecorder) GetBook(ctx, uid interface{}) *g
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBook", reflect.TypeOf((*MockApplicationInterface)(nil).GetBook), ctx, uid)
 }
+
+// GetBooks mocks base method.
+func (m *MockApplicationInterface) GetBooks(ctx context.Context) ([]*model.Book, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetBooks", ctx)
+	ret0, _ := ret[0].([]*model.Book)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetBooks indicates an expected call of GetBooks.
+func (mr *MockApplicationInterfaceMockRecorder) GetBooks(ctx interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBooks", reflect.TypeOf((*MockApplicationInterface)(nil).GetBooks), ctx)
+}

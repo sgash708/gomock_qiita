@@ -119,3 +119,104 @@ func TestGetBookError(t *testing.T) {
 		t.Error("期待するエラーが存在しません")
 	}
 }
+
+func TestGetBooksSuccess(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	// Vars
+	id := 1
+	name := "scenario_name"
+	uuid := "test_handler_uuid"
+	ctx := context.TODO()
+
+	// SetUp
+	req := httptest.NewRequest(http.MethodGet, "/", nil)
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	rec := httptest.NewRecorder()
+	c := e.NewContext(req, rec)
+	c.SetPath("/v1/books")
+
+	// IO
+	appRes := []*model.Book{
+		{
+			ID:   id,
+			Name: name,
+			UUID: uuid,
+		},
+	}
+
+	// MockApplication
+	app := mock_application.NewMockApplicationInterface(ctrl)
+	app.EXPECT().GetBooks(ctx).Return(appRes, nil)
+
+	// TestGetBook
+	ch := handler.NewHandler(app, nil)
+	if err := ch.GetBooks(c); err != nil {
+		t.Error(err)
+	}
+
+	// Status
+	expCode := http.StatusOK
+	recCode := rec.Code
+	recBody := rec.Body
+
+	// Check
+	if expCode != recCode {
+		t.Errorf("expected: %v \n real: %v", expCode, recCode)
+	}
+	if recBody == nil {
+		t.Errorf("bodyの取得に失敗しています")
+	}
+	if !strings.Contains(recBody.String(), name) {
+		t.Error("期待するNameが存在しません")
+	}
+}
+
+func TestGetBooksError(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	// Vars
+	errName := "err_test"
+	jaErrName := "テストエラー"
+	err := xerrors.New(errName)
+	ctx := context.TODO()
+
+	// SetUp
+	req := httptest.NewRequest(http.MethodGet, "/", nil)
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	rec := httptest.NewRecorder()
+	c := e.NewContext(req, rec)
+	c.SetPath("/v1/books")
+
+	// MockApplication
+	app := mock_application.NewMockApplicationInterface(ctrl)
+	app.EXPECT().GetBooks(ctx).Return(nil, err)
+
+	// MockClient
+	i18nm := mock_i18n.NewMockI18nClientInterface(ctrl)
+	i18nm.EXPECT().T(errName).Return(jaErrName)
+
+	// TestGetBook
+	ch := handler.NewHandler(app, i18nm)
+	if err := ch.GetBooks(c); err != nil {
+		t.Error(err)
+	}
+
+	// Status
+	expCode := http.StatusBadRequest
+	recCode := rec.Code
+	recBody := rec.Body
+
+	// Check
+	if expCode != recCode {
+		t.Errorf("expected: %v \n real: %v", expCode, recCode)
+	}
+	if recBody == nil {
+		t.Errorf("bodyの取得に失敗しています")
+	}
+	if !strings.Contains(recBody.String(), jaErrName) {
+		t.Error("期待するエラーが存在しません")
+	}
+}
