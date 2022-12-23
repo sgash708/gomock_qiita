@@ -65,7 +65,11 @@
 				
 				<option value="file4">server/api/handler/handler.go (18.2%)</option>
 				
-				<option value="file5">server/config/config.go (75.0%)</option>
+				<option value="file5">server/api/infrastracture/persistence/book.go (37.1%)</option>
+				
+				<option value="file6">server/api/infrastracture/persistence/repository.go (85.7%)</option>
+				
+				<option value="file7">server/config/config.go (75.0%)</option>
 				
 				</select>
 			</div>
@@ -233,7 +237,140 @@ func (h *Handler) GetCtx(ec echo.Context) context.Context <span class="cov8" tit
 }</span>
 </pre>
 		
-		<pre class="file" id="file5" style="display: none">package config
+		<pre class="file" id="file5" style="display: none">package persistence
+
+import (
+        "context"
+        "errors"
+        "server/api/domain/model"
+
+        "gorm.io/gorm"
+)
+
+type BookRepositoryInterface interface {
+        FindAll(ctx context.Context, ri RepositoryInterface) ([]*model.Book, error)
+        FindByUUID(context.Context, RepositoryInterface, string) (*model.Book, error)
+        Create(context.Context, RepositoryInterface, *model.Book) (*model.Book, error)
+        Update(context.Context, RepositoryInterface, *model.Book) (*model.Book, error)
+        Delete(context.Context, RepositoryInterface, *model.Book) error
+}
+
+type bookRepository struct{}
+
+func NewBookRepository() BookRepositoryInterface <span class="cov8" title="1">{
+        return &amp;bookRepository{}
+}</span>
+
+func (br *bookRepository) FindAll(ctx context.Context, ri RepositoryInterface) ([]*model.Book, error) <span class="cov8" title="1">{
+        db, err := getDBConnection(ri)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="1">var book []*model.Book
+        if err := db.Find(&amp;book).Error; err != nil </span><span class="cov0" title="0">{
+                if errors.Is(err, gorm.ErrRecordNotFound) </span><span class="cov0" title="0">{
+                        return nil, nil
+                }</span>
+                <span class="cov0" title="0">return nil, err</span>
+        }
+
+        <span class="cov8" title="1">return book, nil</span>
+}
+
+func (br *bookRepository) FindByUUID(ctx context.Context, ri RepositoryInterface, uid string) (*model.Book, error) <span class="cov8" title="1">{
+        db, err := getDBConnection(ri)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="1">var book model.Book
+        if err := db.First(&amp;book, "uuid = ?", uid).Error; err != nil </span><span class="cov8" title="1">{
+                if errors.Is(err, gorm.ErrRecordNotFound) </span><span class="cov8" title="1">{
+                        return nil, nil
+                }</span>
+                <span class="cov0" title="0">return nil, err</span>
+        }
+
+        <span class="cov8" title="1">return &amp;book, nil</span>
+}
+
+func (br *bookRepository) Create(ctx context.Context, ri RepositoryInterface, book *model.Book) (*model.Book, error) <span class="cov0" title="0">{
+        db, err := getDBConnection(ri)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov0" title="0">if err := db.Create(book).Error; err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov0" title="0">return book, nil</span>
+}
+
+func (br *bookRepository) Update(ctx context.Context, ri RepositoryInterface, book *model.Book) (*model.Book, error) <span class="cov0" title="0">{
+        db, err := getDBConnection(ri)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov0" title="0">if err := db.Where(book.ID).Updates(book).Error; err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov0" title="0">return book, nil</span>
+}
+
+func (br *bookRepository) Delete(ctx context.Context, ri RepositoryInterface, book *model.Book) error <span class="cov0" title="0">{
+        db, err := getDBConnection(ri)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+
+        <span class="cov0" title="0">return db.Delete(book).Error</span>
+}
+</pre>
+		
+		<pre class="file" id="file6" style="display: none">package persistence
+
+import (
+        "server/config"
+
+        "gorm.io/driver/mysql"
+        "gorm.io/gorm"
+)
+
+type RepositoryInterface interface {
+        GetDB() *gorm.DB
+}
+
+type persistenceInfo struct {
+        db *gorm.DB
+}
+
+func Connect(cfg *config.ServerConfig) (RepositoryInterface, error) <span class="cov8" title="1">{
+        conn, err := gorm.Open(mysql.Open(cfg.DataSource), &amp;gorm.Config{})
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="1">return SetConnection(conn), nil</span>
+}
+
+func SetConnection(db *gorm.DB) RepositoryInterface <span class="cov8" title="1">{
+        return &amp;persistenceInfo{db: db}
+}</span>
+
+func (re *persistenceInfo) GetDB() *gorm.DB <span class="cov8" title="1">{
+        return re.db
+}</span>
+
+func getDBConnection(ri RepositoryInterface) (*gorm.DB, error) <span class="cov8" title="1">{
+        return ri.GetDB(), nil
+}</span>
+</pre>
+		
+		<pre class="file" id="file7" style="display: none">package config
 
 import "github.com/caarlos0/env"
 
