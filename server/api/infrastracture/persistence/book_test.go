@@ -8,30 +8,28 @@ import (
 	"gorm.io/gorm"
 )
 
-func createBook(p *model.Book) (*model.Book, error) {
-	pc := d.Create(p)
+func createBook(b *model.Book) (*model.Book, error) {
+	book := d.Create(b)
 
-	return p, pc.Error
+	return b, book.Error
 }
 
 func findDeletedBook(id int) (*model.Book, error) {
-	// DeletedBook
-	var p model.Book
-	pc := d.Unscoped().First(&p, id)
+	var b model.Book
+	book := d.Unscoped().First(&b, id)
 
-	return &p, pc.Error
+	return &b, book.Error
 }
 
 func findBook(id int) (*model.Book, error) {
-	var p model.Book
-	pc := d.First(&p, id)
+	var b model.Book
 
-	err := pc.Error
+	err := d.First(&b, id).Error
 	if err != nil && errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, nil
 	}
 
-	return &p, err
+	return &b, err
 }
 
 func TestBookFindAllSuccess(t *testing.T) {
@@ -175,284 +173,153 @@ func TestBookFindByUUIDErrorWithEmptyRepo(t *testing.T) {
 	}
 }
 
-// func TestBookCreateSuccessWithData(t *testing.T) {
-// 	// Delete All
-// 	// b.c. gotest is parallel action
-// 	tearDownDB()
+func TestBookCreateSuccessWithData(t *testing.T) {
+	// Delete All
+	tearDownDB()
 
-// 	// Models
-// 	p := model.Book{
-// 		CompanyID: 1,
-// 		Name:      "hoge_name",
-// 	}
+	// Models
+	b := model.Book{
+		UUID: "test-uuid",
+		Name: "hoge_name",
+	}
 
-// 	// TestCreate
-// 	book, err := di.pr.Create(di.ctx, di.r, &p)
-// 	if err != nil {
-// 		t.Error(err)
-// 	}
+	// TestCreate
+	book, err := di.br.Create(di.ctx, di.r, &b)
+	if err != nil {
+		t.Error(err)
+	}
 
-// 	// Check
-// 	if book.CompanyID == 0 {
-// 		t.Error("カンパニーIDが生成できていません")
-// 	}
-// 	if book.Name == "" {
-// 		t.Error("Nameが生成できていません")
-// 	}
-// 	if len(book.CreatedAt.String()) == 0 {
-// 		t.Error("bookが生成できていません")
-// 	}
-// }
+	// Check
+	if book.Name == "" {
+		t.Error("Nameが生成できていません")
+	}
+	if len(book.CreatedAt.String()) == 0 {
+		t.Error("bookが生成できていません")
+	}
+}
 
-// func TestBookCreateErrorWithoutData(t *testing.T) {
-// 	// Delete All
-// 	// b.c. gotest is parallel action
-// 	tearDownDB()
+func TestBookCreateErrorWithoutData(t *testing.T) {
+	// Delete All
+	tearDownDB()
 
-// 	// TestCreate
-// 	pc, err := di.pr.Create(di.ctx, di.r, nil)
-// 	if err != gorm.ErrInvalidValue {
-// 		t.Error(err)
-// 	}
-// 	if pc != nil {
-// 		t.Error("booksが作成できています")
-// 	}
-// }
+	// TestCreate
+	b, err := di.br.Create(di.ctx, di.r, nil)
+	if err != gorm.ErrInvalidValue {
+		t.Error(err)
+	}
+	if b != nil {
+		t.Error("bookが作成できています")
+	}
+}
 
-// func TestBookDeleteSuccessWithData(t *testing.T) {
-// 	// Delete All
-// 	// b.c. gotest is parallel action
-// 	tearDownDB()
+func TestBookUpdateSuccessWithData(t *testing.T) {
+	// Delete All
+	tearDownDB()
 
-// 	// Models
-// 	isDbg := false
-// 	l := model.Layout{
-// 		Title:        "testtitle",
-// 		CustomDesign: "test_custom",
-// 	}
-// 	ii := model.InputItem{
-// 		Type:            "test_type",
-// 		Order:           1,
-// 		Key:             "name",
-// 		MetaData:        "{'placeholder': '田中太郎', 'label': '氏名'}",
-// 		ValidationRules: "[{'type': 1}]",
-// 	}
-// 	iig := model.InputItemGroup{
-// 		Type: "nice_type",
-// 		InputItems: []*model.InputItem{
-// 			&ii,
-// 		},
-// 	}
-// 	m := model.Message{
-// 		Type:           "type",
-// 		Order:          1,
-// 		ImageURL:       "http://localhost:8080/test",
-// 		TextHTML:       "<strong>はじめまして</strong>",
-// 		RenderType:     "render type",
-// 		ConditionRules: "[{ 'key': 2, 'operator': 'hoge', 'value': 'hoge' }]",
-// 	}
-// 	si := model.ScenarioItem{
-// 		ShowSpeed:      1000,
-// 		ConditionRules: "[{ 'input_item_id': 2, 'operator': 'hoge', 'value': 'hoge' }]",
-// 		InputItemGroups: []*model.InputItemGroup{
-// 			&iig,
-// 		},
-// 		Messages: []*model.Message{
-// 			&m,
-// 		},
-// 	}
-// 	pm := model.PipMovie{
-// 		Name:     "test_name",
-// 		MovieUrl: "http://localhost/test/",
-// 	}
-// 	imp := model.Impression{}
-// 	cv := model.Conversion{}
-// 	el := model.EventLog{}
-// 	sess := model.Session{
-// 		UUID: "test",
-// 		Impressions: []*model.Impression{
-// 			&imp,
-// 		},
-// 		EventLogs: []*model.EventLog{
-// 			&el,
-// 		},
-// 		Conversions: []*model.Conversion{
-// 			&cv,
-// 		},
-// 	}
-// 	s := model.Scenario{
-// 		Name:    "hogemaru_name",
-// 		IsDebug: &isDbg,
-// 		Layout:  &l,
-// 		ScenarioItems: []*model.ScenarioItem{
-// 			&si,
-// 		},
-// 		PipMovies: []*model.PipMovie{
-// 			&pm,
-// 		},
-// 		Sessions: []*model.Session{
-// 			&sess,
-// 		},
-// 	}
-// 	p := model.Book{
-// 		CompanyID: 1,
-// 		Name:      "hoge_name",
-// 		Scenarios: []*model.Scenario{
-// 			&s,
-// 		},
-// 	}
+	// Models
+	b := model.Book{
+		UUID: "test-uuid",
+		Name: "hoge_name",
+	}
 
-// 	// Create
-// 	book, err := createBook(&p)
-// 	if err != nil {
-// 		t.Error(err)
-// 	}
+	// Create
+	book, err := createBook(&b)
+	if err != nil {
+		t.Error(err)
+	}
 
-// 	// TestDelete
-// 	if err := di.pr.Delete(di.ctx, di.r, book); err != nil {
-// 		t.Error(err)
-// 	}
+	// Update Request Data
+	reqBook := model.Book{
+		ID:   book.ID,
+		UUID: book.UUID,
+		Name: "hoge_hoge_name",
+	}
 
-// 	// FindByID (Deleted)
-// 	res, err := findDeletedBook(book.ID)
-// 	if err != nil {
-// 		t.Error(err)
-// 	}
+	// TestUpdate
+	res, err := di.br.Update(di.ctx, di.r, &reqBook)
+	if err != nil {
+		t.Error(err)
+	}
 
-// 	// Check
-// 	if len(res.DeletedAt.Time.String()) == 0 {
-// 		t.Error("削除したbooksに削除日が入っていません")
-// 	}
+	// Check
+	if res.Name == book.Name {
+		t.Error("bookのNameが更新されていません")
+	}
+}
 
-// 	// FindByID
-// 	res, err = findBook(book.ID)
-// 	if err != nil {
-// 		t.Error(err)
-// 	}
-// 	// first level of nesting
-// 	unscopeScenario, err := findLayout(book.Scenarios[0].ID)
-// 	if err != nil || unscopeScenario != nil {
-// 		t.Error("scenariosが削除できていません")
-// 	}
-// 	// second level of nesting
-// 	unscopeLayout, err := findLayout(book.Scenarios[0].Layout.ID)
-// 	if err != nil || unscopeLayout != nil {
-// 		t.Error("layoutsが削除できていません")
-// 	}
-// 	// third level of nesting
-// 	unscopeInputItemGroup, err := findInputItemGroup(book.Scenarios[0].ScenarioItems[0].InputItemGroups[0].ID)
-// 	if err != nil || unscopeInputItemGroup != nil {
-// 		t.Error("input_item_groupsが削除できていません")
-// 	}
-// 	// fourth level of nesting
-// 	unscopeInputItem, err := findInputItem(book.Scenarios[0].ScenarioItems[0].InputItemGroups[0].InputItems[0].ID)
-// 	if err != nil || unscopeInputItem != nil {
-// 		t.Error("input_itemsが削除できていません")
-// 	}
+func TestBookUpdateErrorWithoutData(t *testing.T) {
+	defer func() {
+		err := recover()
+		if err == nil {
+			t.Error("nilを引数としてbookを更新できています")
+		}
+	}()
 
-// 	// Check
-// 	if res != nil {
-// 		t.Error("削除したbooksがid指定して取得できています")
-// 	}
-// }
+	// Delete All
+	tearDownDB()
 
-// func TestBookDeleteErrorWithoutData(t *testing.T) {
-// 	// Delete All
-// 	// b.c. gotest is parallel action
-// 	tearDownDB()
+	// TestUpdate
+	res, err := di.br.Update(di.ctx, di.r, nil)
+	if err != nil {
+		t.Errorf("panicにならず更新がされエラーが発生しています\n詳細: %v", err)
+	}
 
-// 	// TestDelete
-// 	err := di.pr.Delete(di.ctx, di.r, nil)
-// 	if err != gorm.ErrInvalidValue {
-// 		t.Error(err)
-// 	}
-// }
+	// Check
+	if res != nil {
+		t.Error("bookの構造体が返されています")
+	}
+}
 
-// func TestBookUpdateSuccessWithData(t *testing.T) {
-// 	// Delete All
-// 	// b.c. gotest is parallel action
-// 	tearDownDB()
+func TestBookDeleteSuccessWithData(t *testing.T) {
+	// Delete All
+	tearDownDB()
 
-// 	// Models
-// 	p := model.Book{
-// 		CompanyID: 1,
-// 		Name:      "hoge_name",
-// 	}
+	// Models
+	b := model.Book{
+		Name: "hoge_name",
+		UUID: "test-uuid",
+	}
 
-// 	// Create
-// 	book, err := createBook(&p)
-// 	if err != nil {
-// 		t.Error(err)
-// 	}
+	// Create
+	book, err := createBook(&b)
+	if err != nil {
+		t.Error(err)
+	}
 
-// 	// Update Request Data
-// 	reqBook := model.Book{
-// 		ID:   book.ID,
-// 		Name: "hoge_hoge_name",
-// 	}
+	// TestDelete
+	if err := di.br.Delete(di.ctx, di.r, book); err != nil {
+		t.Error(err)
+	}
 
-// 	// TestUpdate
-// 	res, err := di.pr.Update(di.ctx, di.r, &reqBook)
-// 	if err != nil {
-// 		t.Error(err)
-// 	}
+	// FindByID (Deleted)
+	res, err := findDeletedBook(book.ID)
+	if err != nil {
+		t.Error(err)
+	}
 
-// 	// Check
-// 	if res.Name == book.Name {
-// 		t.Error("bookのNameが更新されていません")
-// 	}
-// }
+	// Check
+	if len(res.DeletedAt.Time.String()) == 0 {
+		t.Error("削除したbooksに削除日が入っていません")
+	}
 
-// func TestBookUpdateErrorWithoutData(t *testing.T) {
-// 	defer func() {
-// 		err := recover()
-// 		if err == nil {
-// 			t.Error("nilを引数としてbookを更新できています")
-// 		}
-// 	}()
+	// FindByID
+	res, err = findBook(book.ID)
+	if err != nil {
+		t.Error(err)
+	}
 
-// 	// Delete All
-// 	// b.c. gotest is parallel action
-// 	tearDownDB()
+	// Check
+	if res != nil {
+		t.Error("削除したbooksがid指定して取得できています")
+	}
+}
 
-// 	// TestUpdate
-// 	res, err := di.pr.Update(di.ctx, di.r, nil)
-// 	if err != nil {
-// 		t.Errorf("panicにならず更新がされエラーが発生しています\n詳細: %v", err)
-// 	}
+func TestBookDeleteErrorWithoutData(t *testing.T) {
+	// Delete All
+	tearDownDB()
 
-// 	// Check
-// 	if res != nil {
-// 		t.Error("bookの構造体が返されています")
-// 	}
-// }
-
-// func TestBookUpdateErrorWithNotExistID(t *testing.T) {
-// 	// Delete All
-// 	// b.c. gotest is parallel action
-// 	tearDownDB()
-
-// 	// Models
-// 	p := model.Book{
-// 		CompanyID: 1,
-// 		Name:      "hoge_name",
-// 	}
-
-// 	// Create
-// 	_, err := createBook(&p)
-// 	if err != nil {
-// 		t.Error(err)
-// 	}
-
-// 	// Update Request Data
-// 	reqBook := model.Book{
-// 		ID:   1100,
-// 		Name: "hoge_hoge_name",
-// 	}
-
-// 	// TestUpdate
-// 	_, err = di.pr.Update(di.ctx, di.r, &reqBook)
-// 	if err != nil && err != gorm.ErrInvalidValue {
-// 		t.Errorf("存在しない値で更新した際に、不正な値以外のエラーが発生しています\n詳細: %v", err)
-// 	}
-// }
+	// TestDelete
+	if err := di.br.Delete(di.ctx, di.r, nil); err != gorm.ErrInvalidValue {
+		t.Error(err)
+	}
+}
