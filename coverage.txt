@@ -1,0 +1,3 @@
+FAIL	github.com/sgash708/gomock_qiita/config [setup failed]
+?   	github.com/sgash708/gomock_qiita	[no test files]
+FAIL
