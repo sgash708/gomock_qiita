@@ -57,19 +57,23 @@
 				
 				<option value="file0">server/api/application/application.go (100.0%)</option>
 				
-				<option value="file1">server/api/application/book.go (100.0%)</option>
+				<option value="file1">server/api/application/book.go (83.3%)</option>
 				
-				<option value="file2">server/api/handler/book.go (75.0%)</option>
+				<option value="file2">server/api/domain/model/book.go (80.0%)</option>
 				
-				<option value="file3">server/api/handler/error.go (57.1%)</option>
+				<option value="file3">server/api/domain/model/model.go (85.7%)</option>
 				
-				<option value="file4">server/api/handler/handler.go (18.2%)</option>
+				<option value="file4">server/api/handler/book.go (82.6%)</option>
 				
-				<option value="file5">server/api/infrastracture/persistence/book.go (71.4%)</option>
+				<option value="file5">server/api/handler/error.go (57.1%)</option>
 				
-				<option value="file6">server/api/infrastracture/persistence/repository.go (85.7%)</option>
+				<option value="file6">server/api/handler/handler.go (18.2%)</option>
 				
-				<option value="file7">server/config/config.go (75.0%)</option>
+				<option value="file7">server/api/infrastracture/persistence/book.go (75.8%)</option>
+				
+				<option value="file8">server/api/infrastracture/persistence/repository.go (85.7%)</option>
+				
+				<option value="file9">server/config/config.go (75.0%)</option>
 				
 				</select>
 			</div>
@@ -106,6 +110,7 @@ type ApplicationInterface interface {
         // Book
         GetBook(ctx context.Context, uid string) (*model.Book, error)
         GetBooks(ctx context.Context) ([]*model.Book, error)
+        CreateBook(ctx context.Context, req *CreateBookRequest) (*model.Book, error)
 }
 
 func NewApplication(bdl *ApplicationBundle) ApplicationInterface <span class="cov8" title="1">{
@@ -120,6 +125,10 @@ import (
         "server/api/domain/model"
 )
 
+type CreateBookRequest struct {
+        Name string `json:"name"`
+}
+
 func (a *application) GetBook(ctx context.Context, uid string) (*model.Book, error) <span class="cov8" title="1">{
         return a.BookRepository.FindByUUID(ctx, a.Repository, uid)
 }</span>
@@ -127,12 +136,76 @@ func (a *application) GetBook(ctx context.Context, uid string) (*model.Book, err
 func (a *application) GetBooks(ctx context.Context) ([]*model.Book, error) <span class="cov8" title="1">{
         return a.BookRepository.FindAll(ctx, a.Repository)
 }</span>
+
+func (a *application) CreateBook(ctx context.Context, req *CreateBookRequest) (*model.Book, error) <span class="cov8" title="1">{
+        book := &amp;model.Book{
+                Name: req.Name,
+        }
+
+        if err := book.SetUUID(); err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="1">return a.BookRepository.Create(ctx, a.Repository, book)</span>
+}
 </pre>
 		
-		<pre class="file" id="file2" style="display: none">package handler
+		<pre class="file" id="file2" style="display: none">package model
+
+import (
+        "time"
+
+        "gorm.io/gorm"
+)
+
+type Book struct {
+        ID        int            `json:"id" gorm:"primaryKey"`
+        UUID      string         `json:"uuid" gorm:"column:uuid"`
+        Name      string         `json:"name" gorm:"column:name"`
+        CreatedAt time.Time      `json:"createdAt" gorm:"column:created_at"`
+        UpdatedAt time.Time      `json:"updatedAt" gorm:"column:updated_at"`
+        DeletedAt gorm.DeletedAt `json:"deletedAt" gorm:"column:deleted_at"`
+}
+
+func (b *Book) SetUUID() error <span class="cov8" title="1">{
+        uid, err := GetUUID()
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov8" title="1">b.UUID = uid
+
+        return nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file3" style="display: none">package model
+
+import "github.com/google/uuid"
+
+var fakeUUID string
+
+func GetUUID() (string, error) <span class="cov8" title="1">{
+        if fakeUUID == "" </span><span class="cov8" title="1">{
+                uid, err := uuid.NewRandom()
+                if err != nil </span><span class="cov0" title="0">{
+                        return "", err
+                }</span>
+                <span class="cov8" title="1">return uid.String(), nil</span>
+        }
+
+        <span class="cov8" title="1">return fakeUUID, nil</span>
+}
+
+func SetFakeUUID(uid string) <span class="cov8" title="1">{
+        fakeUUID = uid
+}</span>
+</pre>
+		
+		<pre class="file" id="file4" style="display: none">package handler
 
 import (
         "net/http"
+        "server/api/application"
         "server/api/handler/request"
 
         "github.com/labstack/echo/v4"
@@ -163,9 +236,22 @@ func (h *Handler) GetBooks(ec echo.Context) error <span class="cov8" title="1">{
         <span class="cov8" title="1">return ec.JSON(http.StatusOK, res)</span>
 }
 
-func (h *Handler) CreateBook(ec echo.Context) error <span class="cov0" title="0">{
-        return nil
-}</span>
+func (h *Handler) CreateBook(ec echo.Context) error <span class="cov8" title="1">{
+        var req request.CreateBookRequst
+        if err := ec.Bind(&amp;req); err != nil </span><span class="cov0" title="0">{
+                return h.NewErrorResponse(ec, err)
+        }</span>
+
+        <span class="cov8" title="1">ctx := h.GetCtx(ec)
+        res, err := h.Application.CreateBook(ctx, &amp;application.CreateBookRequest{
+                Name: req.Name,
+        })
+        if err != nil </span><span class="cov8" title="1">{
+                return h.NewErrorResponse(ec, err)
+        }</span>
+
+        <span class="cov8" title="1">return ec.JSON(http.StatusCreated, res)</span>
+}
 
 func (h *Handler) UpdateBook(ec echo.Context) error <span class="cov0" title="0">{
         return nil
@@ -176,7 +262,7 @@ func (h *Handler) DeleteBook(ec echo.Context) error <span class="cov0" title="0"
 }</span>
 </pre>
 		
-		<pre class="file" id="file3" style="display: none">package handler
+		<pre class="file" id="file5" style="display: none">package handler
 
 import (
         "net/http"
@@ -205,7 +291,7 @@ func (h *Handler) NewErrorResponse(ec echo.Context, err error) error <span class
 }
 </pre>
 		
-		<pre class="file" id="file4" style="display: none">package handler
+		<pre class="file" id="file6" style="display: none">package handler
 
 import (
         "context"
@@ -235,9 +321,9 @@ func (h *Handler) AssignRoutes(e *echo.Echo) <span class="cov0" title="0">{
         </span><span class="cov0" title="0">{
                 v1bg := v1g.Group("/books")
                 </span><span class="cov0" title="0">{
-                        v1bg.GET("/:uuid", h.GetBook)
-                        v1bg.GET("", h.GetBooks)
                         v1bg.POST("", h.CreateBook)
+                        v1bg.GET("", h.GetBooks)
+                        v1bg.GET("/:uuid", h.GetBook)
                         v1bg.PUT("/:uuid", h.UpdateBook)
                         v1bg.DELETE("/:uuid", h.DeleteBook)
                 }</span>
@@ -249,7 +335,7 @@ func (h *Handler) GetCtx(ec echo.Context) context.Context <span class="cov8" tit
 }</span>
 </pre>
 		
-		<pre class="file" id="file5" style="display: none">package persistence
+		<pre class="file" id="file7" style="display: none">package persistence
 
 import (
         "context"
@@ -281,11 +367,8 @@ func (br *bookRepository) FindAll(ctx context.Context, ri RepositoryInterface) (
 
         <span class="cov8" title="1">var book []*model.Book
         if err := db.Find(&amp;book).Error; err != nil </span><span class="cov0" title="0">{
-                if errors.Is(err, gorm.ErrRecordNotFound) </span><span class="cov0" title="0">{
-                        return nil, nil
-                }</span>
-                <span class="cov0" title="0">return nil, err</span>
-        }
+                return nil, err
+        }</span>
 
         <span class="cov8" title="1">return book, nil</span>
 }
@@ -343,7 +426,7 @@ func (br *bookRepository) Delete(ctx context.Context, ri RepositoryInterface, bo
 }
 </pre>
 		
-		<pre class="file" id="file6" style="display: none">package persistence
+		<pre class="file" id="file8" style="display: none">package persistence
 
 import (
         "server/config"
@@ -382,7 +465,7 @@ func getDBConnection(ri RepositoryInterface) (*gorm.DB, error) <span class="cov8
 }</span>
 </pre>
 		
-		<pre class="file" id="file7" style="display: none">package config
+		<pre class="file" id="file9" style="display: none">package config
 
 import "github.com/caarlos0/env"
 
