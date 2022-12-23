@@ -69,7 +69,7 @@ func TestGetBookSuccess(t *testing.T) {
 	}
 }
 
-func TestGetScenarioError(t *testing.T) {
+func TestGetBookError(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -85,7 +85,7 @@ func TestGetScenarioError(t *testing.T) {
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
-	c.SetPath("/v1/client/scenarios/:uuid")
+	c.SetPath("/v1/books/:uuid")
 	c.SetParamNames("uuid")
 	c.SetParamValues(uuid)
 
