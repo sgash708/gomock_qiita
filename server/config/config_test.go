@@ -4,7 +4,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/sgash708/gomock_qiita/server/config"
+	"server/config"
 )
 
 func clearEnv() {
