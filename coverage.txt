@@ -1,2 +1,5 @@
 ?   	server	[no test files]
+?   	server/api/application	[no test files]
+?   	server/api/client/i18n	[no test files]
+ok  	server/api/handler	0.006s	coverage: 66.7% of statements
 ok  	server/config	0.006s	coverage: 75.0% of statements
