@@ -14,3 +14,13 @@ type Book struct {
 	UpdatedAt time.Time      `json:"updatedAt" gorm:"column:updated_at"`
 	DeletedAt gorm.DeletedAt `json:"deletedAt" gorm:"column:deleted_at"`
 }
+
+func (b *Book) SetUUID() error {
+	uid, err := GetUUID()
+	if err != nil {
+		return err
+	}
+	b.UUID = uid
+
+	return nil
+}

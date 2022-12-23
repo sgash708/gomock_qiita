@@ -30,9 +30,6 @@ func (br *bookRepository) FindAll(ctx context.Context, ri RepositoryInterface) (
 
 	var book []*model.Book
 	if err := db.Find(&book).Error; err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, nil
-		}
 		return nil, err
 	}
 

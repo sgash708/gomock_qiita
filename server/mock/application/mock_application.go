@@ -7,6 +7,7 @@ package mock_application
 import (
 	context "context"
 	reflect "reflect"
+	application "server/api/application"
 	model "server/api/domain/model"
 
 	gomock "github.com/golang/mock/gomock"
@@ -33,6 +34,21 @@ func NewMockApplicationInterface(ctrl *gomock.Controller) *MockApplicationInterf
 // EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockApplicationInterface) EXPECT() *MockApplicationInterfaceMockRecorder {
 	return m.recorder
+}
+
+// CreateBook mocks base method.
+func (m *MockApplicationInterface) CreateBook(ctx context.Context, req *application.CreateBookRequest) (*model.Book, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateBook", ctx, req)
+	ret0, _ := ret[0].(*model.Book)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateBook indicates an expected call of CreateBook.
+func (mr *MockApplicationInterfaceMockRecorder) CreateBook(ctx, req interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateBook", reflect.TypeOf((*MockApplicationInterface)(nil).CreateBook), ctx, req)
 }
 
 // GetBook mocks base method.

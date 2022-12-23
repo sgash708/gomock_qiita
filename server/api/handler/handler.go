@@ -28,9 +28,9 @@ func (h *Handler) AssignRoutes(e *echo.Echo) {
 	{
 		v1bg := v1g.Group("/books")
 		{
-			v1bg.GET("/:uuid", h.GetBook)
-			v1bg.GET("", h.GetBooks)
 			v1bg.POST("", h.CreateBook)
+			v1bg.GET("", h.GetBooks)
+			v1bg.GET("/:uuid", h.GetBook)
 			v1bg.PUT("/:uuid", h.UpdateBook)
 			v1bg.DELETE("/:uuid", h.DeleteBook)
 		}
