@@ -1,0 +1,2 @@
+DROP DATABASE IF EXISTS `mock-test`;
+CREATE DATABASE `mock-test`;

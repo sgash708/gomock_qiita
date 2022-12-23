@@ -1,0 +1,43 @@
+name: ci
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths-ignore:
+      - 'db/*'
+      - 'test_result/**'
+      - 'README.md'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Build App
+        run: |
+          make add-network
+          make build-up
+
+      - name: Test with docker
+        run: |
+          docker-compose exec -T gomock_backend sh ./scripts/go_test.sh
+
+      - name: Show Test Coverage Results
+        run: less test_result/coverage.txt
+
+      - name: Coverage Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./test_result
+
+      - name: Copy octocov.yml to Current Directory
+        run: |
+          echo "[Start] copy file"
+          cp .github/workflows/coverage/.octocov.yml .
+          echo "[Completed] copy file"
+
+      - name: Show Coverage Report
+        uses: k1Low/octocov-action@v0

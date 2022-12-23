@@ -1,0 +1,38 @@
+name: golangci-lint
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths-ignore:
+      - 'db/*'
+      - 'test_result/**'
+      - 'README.md'
+
+jobs:
+  golangci:
+    name: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-go@v3
+        with:
+          go-version: 1.19
+
+      - uses: actions/checkout@v3
+
+      - name: reviewdog
+        uses: reviewdog/action-golangci-lint@v2
+        with:
+          go_version: "1.17"
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          reporter: github-pr-review
+          filter_mode: diff_context
+          fail_on_error: true
+          workdir: server/
+
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v3
+        with:
+          version: v1.50.1
+          working-directory: server
+          args: --timeout 2m0s

@@ -1,0 +1,79 @@
+version: "3.8"
+services:
+  gomock_backend:
+    container_name: gomock_backend
+    build:
+      context: .
+      dockerfile: docker/go/Dockerfile
+    volumes:
+      - .:/app
+    working_dir: /app/server
+    ports:
+      - "1234:1234"
+    restart: always
+    tty: true
+    environment:
+      ENV: "development"
+      PORT: "1234"
+      DRIVER: "mysql"
+      DATASOURCE: "mock-user:password@tcp(mysql)/pipchat-db?charset=utf8mb4&parseTime=true"
+      TZ: 'Asia/Tokyo'
+    command: sh ./scripts/api.sh
+    depends_on:
+      - mock-dev-setup
+      - mock-mysql
+      - mock-tmysql
+    networks:
+      - gomock_backend_network
+
+  mock-mysql:
+    container_name: mock-mysql
+    platform: "linux/x86_64"
+    image: "mysql:5.7"
+    ports:
+      - "${FORWARD_DB_PORT:-33080}:3306"
+    environment:
+      MYSQL_DATABASE: mock-db
+      MYSQL_USER: mock-user
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: passwordroot
+      TZ: 'Asia/Tokyo'
+    volumes:
+      - "mock-mysql-db:/var/lib/mysql"
+      - "./docker/db/my.cnf:/etc/mysql/conf.d/my.cnf"
+    networks:
+      - gomock_backend_network
+
+  mock-tmysql:
+    container_name: mock-tmysql
+    platform: "linux/x86_64"
+    image: "mysql:5.7"
+    ports:
+      - "${FORWARD_DB_PORT:-33090}:3306"
+    environment:
+      MYSQL_DATABASE: mock-test
+      MYSQL_USER: mock-user
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: passwordroot
+      TZ: 'Asia/Tokyo'
+    volumes:
+      - "./docker/db/my.cnf:/etc/mysql/conf.d/my.cnf"
+      - "./docker/db/sql:/docker-entrypoint-initdb.d"
+    networks:
+      - gomock_backend_network
+
+  mock-dev-setup:
+    container_name: mock-dev-setup
+    image: alpine:latest
+    volumes:
+      - .:/app
+    working_dir: /app
+    command: cp pre-commit .git/hooks/pre-commit
+
+volumes:
+  mock-mysql-db:
+    driver: local
+
+networks:
+  gomock_backend_network:
+    external: true
