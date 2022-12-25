@@ -23,6 +23,7 @@ type ApplicationInterface interface {
 	GetBooks(ctx context.Context) ([]*model.Book, error)
 	CreateBook(ctx context.Context, req *CreateBookRequest) (*model.Book, error)
 	UpdateBook(ctx context.Context, req *UpdateBookRequest) (*model.Book, error)
+	DeleteBook(ctx context.Context, uid string) error
 }
 
 func NewApplication(bdl *ApplicationBundle) ApplicationInterface {

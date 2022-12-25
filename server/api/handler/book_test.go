@@ -352,7 +352,7 @@ func TestUpdateBookSuccess(t *testing.T) {
 	)
 
 	// SetUp
-	req := httptest.NewRequest(http.MethodPost, "/", strings.NewReader(reqStrJSON))
+	req := httptest.NewRequest(http.MethodPut, "/", strings.NewReader(reqStrJSON))
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
@@ -419,7 +419,7 @@ func TestUpdateBookError(t *testing.T) {
 	}
 
 	// SetUp
-	req := httptest.NewRequest(http.MethodPost, "/", strings.NewReader(reqStrJSON))
+	req := httptest.NewRequest(http.MethodPut, "/", strings.NewReader(reqStrJSON))
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
@@ -438,6 +438,94 @@ func TestUpdateBookError(t *testing.T) {
 	// TestUpdateBook
 	ch := handler.NewHandler(app, i18nm)
 	if err := ch.UpdateBook(c); err != nil {
+		t.Error(err)
+	}
+
+	// Status
+	expCode := http.StatusBadRequest
+	recCode := rec.Code
+	recBody := rec.Body
+
+	// Check
+	if expCode != recCode {
+		t.Errorf("expected: %v \n real: %v", expCode, recCode)
+	}
+	if recBody == nil {
+		t.Errorf("bodyの取得に失敗しています")
+	}
+	if !strings.Contains(recBody.String(), jaErrName) {
+		t.Error("期待するエラーが存在しません")
+	}
+}
+
+func TestDeleteBookSuccess(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	// Vars
+	uuid := "test_handler_uuid"
+	ctx := context.TODO()
+
+	// SetUp
+	req := httptest.NewRequest(http.MethodDelete, "/", nil)
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	rec := httptest.NewRecorder()
+	c := e.NewContext(req, rec)
+	c.SetPath("/v1/books/:uuid")
+	c.SetParamNames("uuid")
+	c.SetParamValues(uuid)
+
+	// MockApplication
+	app := mock_application.NewMockApplicationInterface(ctrl)
+	app.EXPECT().DeleteBook(ctx, uuid).Return(nil)
+
+	// TestDeleteBook
+	ch := handler.NewHandler(app, nil)
+	if err := ch.DeleteBook(c); err != nil {
+		t.Error(err)
+	}
+
+	// Status
+	expCode := http.StatusNoContent
+	recCode := rec.Code
+
+	// Check
+	if expCode != recCode {
+		t.Errorf("expected: %v \n real: %v", expCode, recCode)
+	}
+}
+
+func TestDeleteBookError(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	// Vars
+	uuid := "err_uuid"
+	errName := "err_test"
+	jaErrName := "テストエラー"
+	err := xerrors.New(errName)
+	ctx := context.TODO()
+
+	// SetUp
+	req := httptest.NewRequest(http.MethodDelete, "/", nil)
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	rec := httptest.NewRecorder()
+	c := e.NewContext(req, rec)
+	c.SetPath("/v1/books/:uuid")
+	c.SetParamNames("uuid")
+	c.SetParamValues(uuid)
+
+	// MockApplication
+	app := mock_application.NewMockApplicationInterface(ctrl)
+	app.EXPECT().DeleteBook(ctx, uuid).Return(err)
+
+	// MockClient
+	i18nm := mock_i18n.NewMockI18nClientInterface(ctrl)
+	i18nm.EXPECT().T(errName).Return(jaErrName)
+
+	// TestDeleteBook
+	ch := handler.NewHandler(app, i18nm)
+	if err := ch.DeleteBook(c); err != nil {
 		t.Error(err)
 	}
 

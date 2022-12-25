@@ -389,3 +389,128 @@ func TestUpdateBookError(t *testing.T) {
 		t.Error(e)
 	}
 }
+
+func TestDeleteBookSuccess(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	var err error
+	id := 1
+	uid := "test-uuid"
+	name := "test-name"
+	now := time.Now()
+	findByUUIDRes := &model.Book{
+		ID:        id,
+		Name:      name,
+		UUID:      uid,
+		CreatedAt: now,
+		UpdatedAt: now,
+	}
+	ctx := context.TODO()
+	r := mock_repository.NewMockRepositoryInterface(ctrl)
+	bRepo := mock_repository.NewMockBookRepositoryInterface(ctrl)
+	bRepo.EXPECT().FindByUUID(ctx, r, uid).Return(findByUUIDRes, err)
+	bRepo.EXPECT().Delete(ctx, r, findByUUIDRes).Return(err)
+
+	a := application.NewApplication(
+		&application.ApplicationBundle{
+			Repository:     r,
+			BookRepository: bRepo,
+		},
+	)
+
+	if err := a.DeleteBook(ctx, uid); err != nil {
+		t.Error(err)
+	}
+}
+
+func TestDeleteBookErrorWithFindByUUID(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	ctx := context.TODO()
+	uid := "test-uuid"
+	err := xerrors.New("create error")
+
+	r := mock_repository.NewMockRepositoryInterface(ctrl)
+	bRepo := mock_repository.NewMockBookRepositoryInterface(ctrl)
+	bRepo.EXPECT().FindByUUID(ctx, r, uid).Return(nil, err)
+
+	a := application.NewApplication(
+		&application.ApplicationBundle{
+			Repository:     r,
+			BookRepository: bRepo,
+		},
+	)
+
+	if e := a.DeleteBook(ctx, uid); e.Error() != err.Error() {
+		t.Error(e)
+	}
+}
+
+func TestDeleteBookErrorWithFindByUUID_NotFound(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	ctx := context.TODO()
+	uid := "test-uuid"
+	err := xerrors.New(model.NotFoundUUIDMsg)
+
+	r := mock_repository.NewMockRepositoryInterface(ctrl)
+	bRepo := mock_repository.NewMockBookRepositoryInterface(ctrl)
+	bRepo.EXPECT().FindByUUID(ctx, r, uid).Return(nil, nil)
+
+	a := application.NewApplication(
+		&application.ApplicationBundle{
+			Repository:     r,
+			BookRepository: bRepo,
+		},
+	)
+
+	if e := a.DeleteBook(ctx, uid); e.Error() != err.Error() {
+		t.Error(e)
+	}
+}
+
+func TestDeleteBookError(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	ctx := context.TODO()
+	id := 1
+	uid := "test-uuid"
+	name := "test-name"
+	now := time.Now()
+	err := xerrors.New("update error")
+
+	findByUUIDRes := &model.Book{
+		ID:        id,
+		Name:      name,
+		UUID:      uid,
+		CreatedAt: now,
+		UpdatedAt: now,
+	}
+	deleteModelReq := &model.Book{
+		ID:        id,
+		Name:      name,
+		UUID:      uid,
+		CreatedAt: now,
+		UpdatedAt: now,
+	}
+
+	r := mock_repository.NewMockRepositoryInterface(ctrl)
+	bRepo := mock_repository.NewMockBookRepositoryInterface(ctrl)
+	bRepo.EXPECT().FindByUUID(ctx, r, uid).Return(findByUUIDRes, nil)
+	bRepo.EXPECT().Delete(ctx, r, deleteModelReq).Return(err)
+
+	a := application.NewApplication(
+		&application.ApplicationBundle{
+			Repository:     r,
+			BookRepository: bRepo,
+		},
+	)
+
+	if e := a.DeleteBook(ctx, uid); e.Error() != err.Error() {
+		t.Error(e)
+	}
+}

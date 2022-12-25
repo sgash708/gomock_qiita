@@ -49,3 +49,15 @@ func (a *application) UpdateBook(ctx context.Context, req *UpdateBookRequest) (*
 
 	return a.BookRepository.Update(ctx, a.Repository, book)
 }
+
+func (a *application) DeleteBook(ctx context.Context, uid string) error {
+	book, err := a.BookRepository.FindByUUID(ctx, a.Repository, uid)
+	if err != nil {
+		return err
+	}
+	if book == nil {
+		return xerrors.New(model.NotFoundUUIDMsg)
+	}
+
+	return a.BookRepository.Delete(ctx, a.Repository, book)
+}

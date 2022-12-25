@@ -69,5 +69,15 @@ func (h *Handler) UpdateBook(ec echo.Context) error {
 }
 
 func (h *Handler) DeleteBook(ec echo.Context) error {
-	return nil
+	var req request.DeleteBookRequest
+	if err := ec.Bind(&req); err != nil {
+		return h.NewErrorResponse(ec, err)
+	}
+
+	ctx := h.GetCtx(ec)
+	if err := h.Application.DeleteBook(ctx, req.UUID); err != nil {
+		return h.NewErrorResponse(ec, err)
+	}
+
+	return ec.NoContent(http.StatusNoContent)
 }

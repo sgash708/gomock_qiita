@@ -12,3 +12,7 @@ type UpdateBookRequest struct {
 	UUID string `param:"uuid"`
 	Name string `json:"name"`
 }
+
+type DeleteBookRequest struct {
+	UUID string `param:"uuid"`
+}

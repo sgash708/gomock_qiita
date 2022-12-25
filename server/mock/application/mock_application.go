@@ -51,6 +51,20 @@ func (mr *MockApplicationInterfaceMockRecorder) CreateBook(ctx, req interface{})
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateBook", reflect.TypeOf((*MockApplicationInterface)(nil).CreateBook), ctx, req)
 }
 
+// DeleteBook mocks base method.
+func (m *MockApplicationInterface) DeleteBook(ctx context.Context, uid string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteBook", ctx, uid)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteBook indicates an expected call of DeleteBook.
+func (mr *MockApplicationInterfaceMockRecorder) DeleteBook(ctx, uid interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteBook", reflect.TypeOf((*MockApplicationInterface)(nil).DeleteBook), ctx, uid)
+}
+
 // GetBook mocks base method.
 func (m *MockApplicationInterface) GetBook(ctx context.Context, uid string) (*model.Book, error) {
 	m.ctrl.T.Helper()
