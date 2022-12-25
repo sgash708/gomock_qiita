@@ -67,7 +67,7 @@
 				
 				<option value="file5">server/api/handler/error.go (57.1%)</option>
 				
-				<option value="file6">server/api/handler/handler.go (18.2%)</option>
+				<option value="file6">server/api/handler/handler.go (100.0%)</option>
 				
 				<option value="file7">server/api/infrastracture/persistence/book.go (75.8%)</option>
 				
@@ -379,11 +379,11 @@ func NewHandler(
         }
 }</span>
 
-func (h *Handler) AssignRoutes(e *echo.Echo) <span class="cov0" title="0">{
+func (h *Handler) AssignRoutes(e *echo.Echo) <span class="cov8" title="1">{
         v1g := e.Group("v1")
-        </span><span class="cov0" title="0">{
+        </span><span class="cov8" title="1">{
                 v1bg := v1g.Group("/books")
-                </span><span class="cov0" title="0">{
+                </span><span class="cov8" title="1">{
                         v1bg.POST("", h.CreateBook)
                         v1bg.GET("", h.GetBooks)
                         v1bg.GET("/:uuid", h.GetBook)
