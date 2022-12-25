@@ -24,3 +24,7 @@ func (b *Book) SetUUID() error {
 
 	return nil
 }
+
+func (b *Book) UpdateBookName(name string) {
+	b.Name = name
+}

@@ -3,9 +3,16 @@ package application
 import (
 	"context"
 	"server/api/domain/model"
+
+	"golang.org/x/xerrors"
 )
 
 type CreateBookRequest struct {
+	Name string `json:"name"`
+}
+
+type UpdateBookRequest struct {
+	UUID string `json:"uuid"`
 	Name string `json:"name"`
 }
 
@@ -27,4 +34,30 @@ func (a *application) CreateBook(ctx context.Context, req *CreateBookRequest) (*
 	}
 
 	return a.BookRepository.Create(ctx, a.Repository, book)
+}
+
+func (a *application) UpdateBook(ctx context.Context, req *UpdateBookRequest) (*model.Book, error) {
+	book, err := a.BookRepository.FindByUUID(ctx, a.Repository, req.UUID)
+	if err != nil {
+		return nil, err
+	}
+	if book == nil {
+		return nil, xerrors.New(model.NotFoundUUIDMsg)
+	}
+
+	book.UpdateBookName(req.Name)
+
+	return a.BookRepository.Update(ctx, a.Repository, book)
+}
+
+func (a *application) DeleteBook(ctx context.Context, uid string) error {
+	book, err := a.BookRepository.FindByUUID(ctx, a.Repository, uid)
+	if err != nil {
+		return err
+	}
+	if book == nil {
+		return xerrors.New(model.NotFoundUUIDMsg)
+	}
+
+	return a.BookRepository.Delete(ctx, a.Repository, book)
 }
