@@ -20,3 +20,20 @@ func TestSetUUID(t *testing.T) {
 		}
 	}
 }
+
+func TestUpdateBookName(t *testing.T) {
+	name := "test"
+	updatedName := "updated-test"
+
+	book := &Book{
+		Name: name,
+		UUID: "test-uuid",
+		ID:   1,
+	}
+
+	book.UpdateBookName(updatedName)
+
+	if book.Name == name {
+		t.Error("updateに失敗しています")
+	}
+}

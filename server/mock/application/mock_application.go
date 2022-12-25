@@ -80,3 +80,18 @@ func (mr *MockApplicationInterfaceMockRecorder) GetBooks(ctx interface{}) *gomoc
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBooks", reflect.TypeOf((*MockApplicationInterface)(nil).GetBooks), ctx)
 }
+
+// UpdateBook mocks base method.
+func (m *MockApplicationInterface) UpdateBook(ctx context.Context, req *application.UpdateBookRequest) (*model.Book, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateBook", ctx, req)
+	ret0, _ := ret[0].(*model.Book)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpdateBook indicates an expected call of UpdateBook.
+func (mr *MockApplicationInterfaceMockRecorder) UpdateBook(ctx, req interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateBook", reflect.TypeOf((*MockApplicationInterface)(nil).UpdateBook), ctx, req)
+}

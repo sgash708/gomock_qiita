@@ -4,6 +4,11 @@ type GetBookRequest struct {
 	UUID string `param:"uuid"`
 }
 
-type CreateBookRequst struct {
+type CreateBookRequest struct {
+	Name string `json:"name"`
+}
+
+type UpdateBookRequest struct {
+	UUID string `param:"uuid"`
 	Name string `json:"name"`
 }

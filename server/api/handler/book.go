@@ -34,7 +34,7 @@ func (h *Handler) GetBooks(ec echo.Context) error {
 }
 
 func (h *Handler) CreateBook(ec echo.Context) error {
-	var req request.CreateBookRequst
+	var req request.CreateBookRequest
 	if err := ec.Bind(&req); err != nil {
 		return h.NewErrorResponse(ec, err)
 	}
@@ -51,7 +51,21 @@ func (h *Handler) CreateBook(ec echo.Context) error {
 }
 
 func (h *Handler) UpdateBook(ec echo.Context) error {
-	return nil
+	var req request.UpdateBookRequest
+	if err := ec.Bind(&req); err != nil {
+		return h.NewErrorResponse(ec, err)
+	}
+
+	ctx := h.GetCtx(ec)
+	res, err := h.Application.UpdateBook(ctx, &application.UpdateBookRequest{
+		Name: req.Name,
+		UUID: req.UUID,
+	})
+	if err != nil {
+		return h.NewErrorResponse(ec, err)
+	}
+
+	return ec.JSON(http.StatusOK, res)
 }
 
 func (h *Handler) DeleteBook(ec echo.Context) error {
