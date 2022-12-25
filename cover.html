@@ -57,13 +57,13 @@
 				
 				<option value="file0">server/api/application/application.go (100.0%)</option>
 				
-				<option value="file1">server/api/application/book.go (92.3%)</option>
+				<option value="file1">server/api/application/book.go (94.7%)</option>
 				
 				<option value="file2">server/api/domain/model/book.go (83.3%)</option>
 				
 				<option value="file3">server/api/domain/model/model.go (85.7%)</option>
 				
-				<option value="file4">server/api/handler/book.go (86.7%)</option>
+				<option value="file4">server/api/handler/book.go (88.9%)</option>
 				
 				<option value="file5">server/api/handler/error.go (57.1%)</option>
 				
@@ -112,6 +112,7 @@ type ApplicationInterface interface {
         GetBooks(ctx context.Context) ([]*model.Book, error)
         CreateBook(ctx context.Context, req *CreateBookRequest) (*model.Book, error)
         UpdateBook(ctx context.Context, req *UpdateBookRequest) (*model.Book, error)
+        DeleteBook(ctx context.Context, uid string) error
 }
 
 func NewApplication(bdl *ApplicationBundle) ApplicationInterface <span class="cov8" title="1">{
@@ -169,6 +170,18 @@ func (a *application) UpdateBook(ctx context.Context, req *UpdateBookRequest) (*
         <span class="cov8" title="1">book.UpdateBookName(req.Name)
 
         return a.BookRepository.Update(ctx, a.Repository, book)</span>
+}
+
+func (a *application) DeleteBook(ctx context.Context, uid string) error <span class="cov8" title="1">{
+        book, err := a.BookRepository.FindByUUID(ctx, a.Repository, uid)
+        if err != nil </span><span class="cov8" title="1">{
+                return err
+        }</span>
+        <span class="cov8" title="1">if book == nil </span><span class="cov8" title="1">{
+                return xerrors.New(model.NotFoundUUIDMsg)
+        }</span>
+
+        <span class="cov8" title="1">return a.BookRepository.Delete(ctx, a.Repository, book)</span>
 }
 </pre>
 		
@@ -297,9 +310,19 @@ func (h *Handler) UpdateBook(ec echo.Context) error <span class="cov8" title="1"
         <span class="cov8" title="1">return ec.JSON(http.StatusOK, res)</span>
 }
 
-func (h *Handler) DeleteBook(ec echo.Context) error <span class="cov0" title="0">{
-        return nil
-}</span>
+func (h *Handler) DeleteBook(ec echo.Context) error <span class="cov8" title="1">{
+        var req request.DeleteBookRequest
+        if err := ec.Bind(&amp;req); err != nil </span><span class="cov0" title="0">{
+                return h.NewErrorResponse(ec, err)
+        }</span>
+
+        <span class="cov8" title="1">ctx := h.GetCtx(ec)
+        if err := h.Application.DeleteBook(ctx, req.UUID); err != nil </span><span class="cov8" title="1">{
+                return h.NewErrorResponse(ec, err)
+        }</span>
+
+        <span class="cov8" title="1">return ec.NoContent(http.StatusNoContent)</span>
+}
 </pre>
 		
 		<pre class="file" id="file5" style="display: none">package handler

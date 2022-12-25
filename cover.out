@@ -9,7 +9,7 @@ server/api/domain/model/model.go:8.20,10.17 2 1
 server/api/domain/model/model.go:13.3,13.27 1 1
 server/api/domain/model/model.go:10.17,12.4 1 0
 server/api/domain/model/model.go:19.30,21.2 1 1
-server/api/application/application.go:28.66,30.2 1 1
+server/api/application/application.go:29.66,31.2 1 1
 server/api/application/book.go:19.85,21.2 1 1
 server/api/application/book.go:23.76,25.2 1 1
 server/api/application/book.go:27.100,32.39 2 1
@@ -20,6 +20,11 @@ server/api/application/book.go:44.2,44.17 1 1
 server/api/application/book.go:48.2,50.57 2 1
 server/api/application/book.go:41.16,43.3 1 1
 server/api/application/book.go:44.17,46.3 1 1
+server/api/application/book.go:53.73,55.16 2 1
+server/api/application/book.go:58.2,58.17 1 1
+server/api/application/book.go:62.2,62.57 1 1
+server/api/application/book.go:55.16,57.3 1 1
+server/api/application/book.go:58.17,60.3 1 1
 server/api/handler/book.go:11.50,13.38 2 1
 server/api/handler/book.go:17.2,19.16 3 1
 server/api/handler/book.go:23.2,23.36 1 1
@@ -38,7 +43,11 @@ server/api/handler/book.go:59.2,64.16 3 1
 server/api/handler/book.go:68.2,68.36 1 1
 server/api/handler/book.go:55.38,57.3 1 0
 server/api/handler/book.go:64.16,66.3 1 1
-server/api/handler/book.go:71.53,73.2 1 0
+server/api/handler/book.go:71.53,73.38 2 1
+server/api/handler/book.go:77.2,78.64 2 1
+server/api/handler/book.go:82.2,82.43 1 1
+server/api/handler/book.go:73.38,75.3 1 0
+server/api/handler/book.go:78.64,80.3 1 1
 server/api/handler/error.go:14.70,16.27 2 1
 server/api/handler/error.go:26.2,26.47 1 1
 server/api/handler/error.go:17.34,19.28 2 0
